@@ -8,6 +8,8 @@
 -- like .prefer = [ "lua", "typst" ... ]
 -- which will try first the tree-sitter parser and fallback to lpeg
 
+-- FIXME: Rewrite the whole stuff later, this is just a POC
+
 local path = debug.getinfo(1, "S").source:match("^@?(.*)/")
 if path then
 	package.cpath = path .. "/?.so;" .. package.cpath
@@ -370,7 +372,7 @@ if vis then
 		local old_load = vis.lexers.load
 		local dummy_cache = {} -- NOTE: make sure _TAGS arrays aren't re-instantiated and lost
 		vis.lexers.load = function(name, alt_name, cache)
-			if name and M.parser_for(name) then
+			if name and M.parser_for(name) and get_query(name) then
 				if dummy_cache[name] then return dummy_cache[name] end
 				local tags_copy = {}
 				for i, tag in ipairs(M.default_tags) do
